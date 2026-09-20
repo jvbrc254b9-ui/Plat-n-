@@ -1,1 +1,280 @@
-# Plat-n-
+# Plat-n-<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Серія пенальті ⚽</title>
+<style>
+    * {
+        box-sizing: border-box;
+    }
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #111827;
+        color: white;
+        text-align: center;
+    }
+    h1 {
+        margin: 20px 0 5px;
+    }
+    #score {
+        font-size: 28px;
+        font-weight: bold;
+        margin: 10px;
+    }
+    #turn {
+        font-size: 20px;
+        margin-bottom: 15px;
+    }
+    #field {
+        width: 95%;
+        max-width: 700px;
+        height: 450px;
+        margin: auto;
+        position: relative;
+        overflow: hidden;
+        border: 4px solid white;
+        border-radius: 15px;
+        background:
+            repeating-linear-gradient(
+                90deg,
+                #3f9b48 0px,
+                #3f9b48 70px,
+                #34863d 70px,
+                #34863d 140px
+            );
+    }
+    /* Ворота */
+    #goal {
+        position: absolute;
+        top: 25px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 75%;
+        height: 170px;
+        border: 8px solid white;
+        background:
+            repeating-linear-gradient(
+                90deg,
+                transparent 0px,
+                transparent 28px,
+                rgba(255,255,255,0.35) 29px,
+                rgba(255,255,255,0.35) 31px
+            ),
+            repeating-linear-gradient(
+                0deg,
+                transparent 0px,
+                transparent 28px,
+                rgba(255,255,255,0.35) 29px,
+                rgba(255,255,255,0.35) 31px
+            );
+    }
+    /* Воротар */
+    #goalkeeper {
+        position: absolute;
+        top: 105px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 55px;
+        transition: 0.4s;
+        z-index: 3;
+    }
+    /* Гравець */
+    #player {
+        position: absolute;
+        bottom: 25px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 65px;
+        z-index: 3;
+    }
+    /* М'яч */
+    #ball {
+        position: absolute;
+        bottom: 95px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 30px;
+        transition: 0.45s;
+        z-index: 4;
+    }
+    #buttons {
+        margin: 15px auto;
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+    button {
+        border: none;
+        border-radius: 10px;
+        padding: 14px 22px;
+        font-size: 17px;
+        cursor: pointer;
+        background: white;
+        color: #111827;
+        font-weight: bold;
+    }
+    button:hover {
+        transform: scale(1.05);
+    }
+    #message {
+        font-size: 20px;
+        min-height: 30px;
+        margin: 10px;
+    }
+    #restart {
+        background: #facc15;
+    }
+</style>
+</head>
+<body>
+<h1>⚽ Серія пенальті</h1>
+<div id="score">
+    🔴 <span id="redScore">0</span>
+    —
+    <span id="blueScore">0</span> 🔵
+</div>
+<div id="turn">🔴 Б'ють червоні</div>
+<div id="field">
+    <div id="goal"></div>
+    <div id="goalkeeper">🧤</div>
+    <div id="ball">⚽</div>
+    <div id="player">🔴</div>
+</div>
+<div id="buttons">
+    <button onclick="shoot('left')">⬅️ Ліворуч</button>
+    <button onclick="shoot('center')">⬆️ Центр</button>
+    <button onclick="shoot('right')">➡️ Праворуч</button>
+</div>
+<div id="message">
+    Обери напрямок удару!
+</div>
+<button id="restart" onclick="restartGame()">
+    🔄 Почати заново
+</button>
+<script>
+let redScore = 0;
+let blueScore = 0;
+let currentPlayer = "red";
+let redKicks = 0;
+let blueKicks = 0;
+let gameOver = false;
+function shoot(direction) {
+    if (gameOver) return;
+    const goalkeeperDirections = ["left", "center", "right"];
+    const goalkeeperDirection =
+        goalkeeperDirections[
+            Math.floor(Math.random() * 3)
+        ];
+    const ball = document.getElementById("ball");
+    const goalkeeper = document.getElementById("goalkeeper");
+    /* Рух м'яча */
+    if (direction === "left") {
+        ball.style.left = "20%";
+        ball.style.bottom = "245px";
+    }
+    if (direction === "center") {
+        ball.style.left = "50%";
+        ball.style.bottom = "255px";
+    }
+    if (direction === "right") {
+        ball.style.left = "80%";
+        ball.style.bottom = "245px";
+    }
+    /* Рух воротаря */
+    if (goalkeeperDirection === "left") {
+        goalkeeper.style.left = "20%";
+    }
+    if (goalkeeperDirection === "center") {
+        goalkeeper.style.left = "50%";
+    }
+    if (goalkeeperDirection === "right") {
+        goalkeeper.style.left = "80%";
+    }
+    setTimeout(function() {
+        const saved =
+            direction === goalkeeperDirection;
+        if (saved) {
+            document.getElementById("message").textContent =
+                "🧤 ВОРОТАР ВІДБИВ!";
+        } else {
+            if (currentPlayer === "red") {
+                redScore++;
+                document.getElementById("redScore").textContent =
+                    redScore;
+                document.getElementById("message").textContent =
+                    "🔴 ГОООООЛ!";
+            } else {
+                blueScore++;
+                document.getElementById("blueScore").textContent =
+                    blueScore;
+                document.getElementById("message").textContent =
+                    "🔵 ГОООООЛ!";
+            }
+        }
+        if (currentPlayer === "red") {
+            redKicks++;
+            currentPlayer = "blue";
+        } else {
+            blueKicks++;
+            currentPlayer = "red";
+        }
+        /* Перевірка кінця серії */
+        if (redKicks >= 5 && blueKicks >= 5) {
+            gameOver = true;
+            if (redScore > blueScore) {
+                document.getElementById("message").textContent =
+                    "🏆 🔴 ЧЕРВОНІ ПЕРЕМОГЛИ!";
+            }
+            else if (blueScore > redScore) {
+                document.getElementById("message").textContent =
+                    "🏆 🔵 СИНІ ПЕРЕМОГЛИ!";
+            }
+            else {
+                document.getElementById("message").textContent =
+                    "🤝 НІЧИЯ! Потрібна додаткова серія!";
+            }
+            return;
+        }
+        updateTurn();
+        /* Повернення м'яча */
+        setTimeout(resetBall, 500);
+    }, 500);
+}
+function updateTurn() {
+    const turn = document.getElementById("turn");
+    const player = document.getElementById("player");
+    if (currentPlayer === "red") {
+        turn.textContent = "🔴 Б'ють червоні";
+        player.textContent = "🔴";
+    } else {
+        turn.textContent = "🔵 Б'ють сині";
+        player.textContent = "🔵";
+    }
+}
+function resetBall() {
+    const ball = document.getElementById("ball");
+    const goalkeeper = document.getElementById("goalkeeper");
+    ball.style.left = "50%";
+    ball.style.bottom = "95px";
+    goalkeeper.style.left = "50%";
+}
+function restartGame() {
+    redScore = 0;
+    blueScore = 0;
+    redKicks = 0;
+    blueKicks = 0;
+    currentPlayer = "red";
+    gameOver = false;
+    document.getElementById("redScore").textContent = "0";
+    document.getElementById("blueScore").textContent = "0";
+    document.getElementById("message").textContent =
+        "Обери напрямок удару!";
+    resetBall();
+    updateTurn();
+}
+</script>
+</body>
+</html>
